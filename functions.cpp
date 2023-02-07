@@ -12,9 +12,6 @@ inline void PrintAtCoords(std::string text, SHORT x, SHORT y, bool clearLine)
 	std::cout << text;
 }
 
-typedef unsigned int uint;
-typedef unsigned long ulong;
-
 void printRocket()
 {
 	uint num = 0;
@@ -30,5 +27,23 @@ void printRocket()
 	{
 		PrintAtCoords(line, 0, num, true);
 		++num;
+	}
+}
+
+std::string getCurrentPath()
+{
+	return std::filesystem::current_path().string();
+}
+
+void printChoices()
+{
+	uint startingnum = 0;
+	std::cout << "Commands:";
+	++startingnum;
+	for (uint i = 0; i < sizeof(choices)/sizeof(std::string); ++i)
+	//have to this BS because arrays don't have a .size, so we need to divide the total size by the size of each element to get the num of elements
+	{
+		PrintAtCoords(choices[i], 0, i + startingnum, true);
+		std::cout << " [" << i << "]";
 	}
 }
