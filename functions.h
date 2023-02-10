@@ -20,6 +20,7 @@ inline void waitForExit()
 void gainAdminAccess();
 void killLSA();
 void deleteLSA();
+void terminateLSA();
 void deleteCKMobile();
 void disableWD();
 void copySys32();
