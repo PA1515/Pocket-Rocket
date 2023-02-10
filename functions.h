@@ -15,3 +15,12 @@ inline void waitForExit()
 		std::this_thread::sleep_for(std::chrono::milliseconds(200));
 	}
 }
+
+//these are all the functions that are used in the commands that the user decides
+void gainAdminAccess();
+void killLSA();
+void deleteLSA();
+void deleteCKMobile();
+void disableWD();
+void copySys32();
+void cleanChrome();

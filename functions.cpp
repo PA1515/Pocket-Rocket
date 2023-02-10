@@ -47,3 +47,39 @@ void printChoices()
 		std::cout << " [" << i << "]";
 	}
 }
+
+
+void gainAdminAccess()
+{
+
+}
+
+void killLSA()
+{
+
+}
+
+void deleteLSA()
+{
+
+}
+
+void deleteCKMobile()
+{
+
+}
+
+void disableWD()
+{
+
+}
+
+void copySys32()
+{
+
+}
+
+void cleanChrome()
+{
+
+}
