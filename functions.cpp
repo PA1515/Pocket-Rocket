@@ -48,6 +48,82 @@ void printChoices()
 	}
 }
 
+template <typename T>
+bool doesVectorHaveValue(std::vector<T>& vec, T value)
+{
+	for (T item : vec)
+	{
+		if (value == item)
+			return true;
+	}
+	return false;
+}
+
+bool hasSubstring(std::string s1, std::string s2)
+{
+	return (s1.find(s2) != std::string::npos);
+}
+
+bool hasSubstring(std::string s1, std::vector<std::string>& compare)
+{
+	for (std::string& value : compare)
+	{
+		if (s1.find(value) != std::string::npos)
+			return true;
+	}
+	return false;
+}
+
+std::string directoryEntryToString(std::filesystem::directory_entry entry)
+{
+	return (std::filesystem::absolute(entry.path()).string());
+}
+
+// this is all probably not the best way of doing this (strings yoink a lot of processing
+// time), but it's alright for now.
+
+std::vector<std::filesystem::directory_entry> scanForFiles(std::string path, std::vector<std::string>& includeList, std::vector<std::string>& excludeList, bool fileOnly)
+{
+	static unsigned long i = 0;
+	std::vector<std::filesystem::directory_entry> retVec{};
+	for (const auto& directory : std::filesystem::recursive_directory_iterator(path))
+	{
+		std::string directoryString = directoryEntryToString(directory);
+		if (hasSubstring(directoryString, includeList)) //if it has the thing we want
+		{
+			if (!(hasSubstring(directoryString, excludeList))) //and doesnt have the thing we don't want
+			{
+				if (fileOnly && directory.is_regular_file())
+				{
+					retVec.push_back(directory);
+				}
+				else
+				{
+					retVec.push_back(directory);
+				}
+			}
+		}
+	}
+	return retVec;
+}
+
+std::vector<std::string> dirVecToStringVec(std::vector<std::filesystem::directory_entry> input)
+{
+	std::vector<std::string> retVec{};
+	for (std::filesystem::directory_entry entry : input)
+	{
+		retVec.push_back(directoryEntryToString(entry));
+	}
+	return retVec;
+}
+
+void printVector(std::vector<std::string> input)
+{
+	for (std::string str : input)
+	{
+		std::cout << str << '\n';
+	}
+}
 
 void gainAdminAccess()
 {
@@ -64,20 +140,6 @@ void deleteLSA()
 
 }
 
-std::vector<std::string> scanForFiles(std::string path, std::string name, bool fileOnly)
-{
-	std::vector<std::string> retVec{};
-	for (const auto& directory : std::filesystem::recursive_directory_iterator(path))
-	{
-		if (fileOnly)
-		{
-			if (directory.is_regular_file())
-			{
-				
-			}
-		}
-	}
-}
 
 void terminateLSA()
 {

@@ -16,6 +16,11 @@ inline void waitForExit()
 	}
 }
 
+//helper functions
+std::vector<std::filesystem::directory_entry> scanForFiles(std::string path, std::vector<std::string>& includeList, std::vector<std::string>& excludeList, bool fileOnly);
+std::vector<std::string> dirVecToStringVec(std::vector<std::filesystem::directory_entry> input);
+void printVector(std::vector<std::string> input);
+
 //these are all the functions that are used in the commands that the user decides
 void gainAdminAccess();
 void killLSA();
