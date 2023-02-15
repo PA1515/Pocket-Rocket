@@ -59,12 +59,12 @@ bool doesVectorHaveValue(std::vector<T>& vec, T value)
 	return false;
 }
 
-bool hasSubstring(std::string s1, std::string s2)
+bool hasSubstring(std::string& s1, std::string& s2)
 {
 	return (s1.find(s2) != std::string::npos);
 }
 
-bool hasSubstring(std::string s1, std::vector<std::string>& compare)
+bool hasSubstring(std::string& s1, std::vector<std::string>& compare)
 {
 	for (std::string& value : compare)
 	{
@@ -73,38 +73,94 @@ bool hasSubstring(std::string s1, std::vector<std::string>& compare)
 	}
 	return false;
 }
+//overloads for string_view since it takes less memory to process
+bool hasSubstring(std::string_view& s1, std::string_view& s2)
+{
+	return (s1.find(s2) != std::string::npos);
+}
+bool hasSubstring(std::string_view& s1, std::vector<std::string_view>& compare)
+{
+	for (std::string_view& value : compare)
+	{
+		if (s1.find(value) != std::string::npos)
+			return true;
+	}
+	return false;
+}
+
 
 std::string directoryEntryToString(std::filesystem::directory_entry entry)
 {
 	return (std::filesystem::absolute(entry.path()).string());
 }
 
+std::string_view directoryEntryToStringView(std::filesystem::directory_entry entry)
+{
+	std::string strret = std::filesystem::absolute(entry.path()).string();
+	std::string_view ret(strret);
+	return ret; //doing this to avoid dangling pointers. Convert string to string view.
+}
+
 // this is all probably not the best way of doing this (strings yoink a lot of processing
 // time), but it's alright for now.
 
-std::vector<std::filesystem::directory_entry> scanForFiles(std::string path, std::vector<std::string>& includeList, std::vector<std::string>& excludeList, bool fileOnly)
+std::vector<std::filesystem::directory_entry> scanForFiles(std::string& path, std::vector<std::string_view>& includeList, std::vector<std::string_view>& excludeList, bool fileOnly, size_t& filesDone)
 {
-	static unsigned long i = 0;
+	// doing the classic "recursive_directory_operator" won't help here, since
+	// it causes a stack buffer overflow (function gets too large)
+	// we'll have to break it down into smaller pieces, essentially doing
+	// the recursive part manually... Well, shit.
+	// that's fine. We can just find the folders that shit will probably appear in, and
+	// go from there.
+	// make it an argument.
+
+	// nah, fuck it. we use ChatGPT for answers to our questions.
+	// it came up with using dynamic memory allocation, so IG we're doing that now...
+	// yahoo
+
 	std::vector<std::filesystem::directory_entry> retVec{};
-	for (const auto& directory : std::filesystem::recursive_directory_iterator(path))
+
+	std::vector<std::filesystem::path*> path_vec;
+	path_vec.push_back(new std::filesystem::path(path));
+
+	filesDone = 0;
+	while (!path_vec.empty())
 	{
-		std::string directoryString = directoryEntryToString(directory);
-		if (hasSubstring(directoryString, includeList)) //if it has the thing we want
+		//get current path on the chopping block
+		std::filesystem::path* current_path = path_vec.front();
+
+		//remove it from the vector (so we don't use it again)
+		path_vec.erase(path_vec.begin());
+		
+		//loop over things in directory
+		for (const auto& entry : std::filesystem::directory_iterator(*current_path))
 		{
-			if (!(hasSubstring(directoryString, excludeList))) //and doesnt have the thing we don't want
+			auto str = directoryEntryToStringView(entry); //string_view for operations
+			if (hasSubstring(str, includeList) && !hasSubstring(str, excludeList)) //check for includes/excludes
 			{
-				if (fileOnly && directory.is_regular_file())
+				if (entry.is_directory())
 				{
-					retVec.push_back(directory);
+					if (!fileOnly)
+					{
+						retVec.push_back(entry);
+					}
+					std::filesystem::path* new_path = new std::filesystem::path(entry.path());
+					path_vec.push_back(new_path);
 				}
 				else
 				{
-					retVec.push_back(directory);
+					retVec.push_back(entry);
 				}
+				++filesDone;
 			}
 		}
+		delete current_path; //no memory leaks please!!! :)))
 	}
+
+
 	return retVec;
+	// we will return a vector of all found directory entries that coincide with the dirs/files
+	// we want to find.
 }
 
 std::vector<std::string> dirVecToStringVec(std::vector<std::filesystem::directory_entry> input)

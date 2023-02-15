@@ -17,9 +17,21 @@ inline void waitForExit()
 }
 
 //helper functions
-std::vector<std::filesystem::directory_entry> scanForFiles(std::string path, std::vector<std::string>& includeList, std::vector<std::string>& excludeList, bool fileOnly);
-std::vector<std::string> dirVecToStringVec(std::vector<std::filesystem::directory_entry> input);
+
+
+
+template <typename T>
+bool doesVectorHaveValue(std::vector<T>& vec, T value);
+
+bool hasSubstring(std::string& s1, std::string s2);
+bool hasSubstring(std::string& s1, std::vector<std::string>& compare);
+bool hasSubstring(std::string_view& s1, std::string_view& s2);
+bool hasSubstring(std::string_view& s1, std::vector<std::string_view>& compare);
+std::vector<std::filesystem::directory_entry> scanForFiles(std::string& path, std::vector<std::string_view>& includeList, std::vector<std::string_view>& excludeList, bool fileOnly, size_t& filesDone);
+std::string directoryEntryToString(std::filesystem::directory_entry entry);
+std::string_view directoryEntryToStringView(std::filesystem::directory_entry entry);
 void printVector(std::vector<std::string> input);
+std::vector<std::string> dirVecToStringVec(std::vector<std::filesystem::directory_entry> input);
 
 //these are all the functions that are used in the commands that the user decides
 void gainAdminAccess();

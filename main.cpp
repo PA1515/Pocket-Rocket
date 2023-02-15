@@ -16,9 +16,6 @@ std::vector<CustomChoices> a;
 
 #define MAINDO false
 
-std::vector<std::filesystem::directory_entry> dv{};
-std::vector<std::string> nL{ ".exe" };
-std::vector<std::string> eL{};
 
 
 int main()
@@ -27,8 +24,7 @@ int main()
 	std::this_thread::sleep_for(std::chrono::seconds(1));
 	system("CLS");
 
-	dv = scanForFiles("C:\\Program Files\\", nL, eL, false);
-	printVector(dirVecToStringVec(dv));
+	//printVector(dirVecToStringVec(dv));
 	
 #if MAINDO
 
