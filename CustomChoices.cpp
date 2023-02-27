@@ -1,5 +1,8 @@
 #include "CustomChoices.h"
 #include "functions.h"
+#include "choiceFunctions.h"
+
+//CustomChoices class functions set up here
 
 CustomChoices::CustomChoices(std::string name, std::string description, std::function<void()> func)
 {
@@ -20,6 +23,9 @@ std::string CustomChoices::getDescription()
 {
 	return this->description;
 }
+
+
+//setupChoices defined here 
 
 std::vector<CustomChoices> setupChoices()
 {

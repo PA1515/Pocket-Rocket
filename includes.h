@@ -8,6 +8,7 @@
 #include <fstream>
 #include <filesystem>
 #include <functional>
+#include <cctype> //check for non-ascii characters
 
 typedef unsigned int uint;
 typedef unsigned long ulong;
